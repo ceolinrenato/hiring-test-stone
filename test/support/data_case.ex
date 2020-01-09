@@ -13,6 +13,7 @@ defmodule HiringTestStone.DataCase do
   by setting `use HiringTestStoneWeb.DataCase, async: true`, although
   this option is not recommendded for other databases.
   """
+  alias Ecto.Adapters.SQL.Sandbox
 
   use ExUnit.CaseTemplate
 
@@ -28,10 +29,10 @@ defmodule HiringTestStone.DataCase do
   end
 
   setup tags do
-    :ok = Ecto.Adapters.SQL.Sandbox.checkout(HiringTestStone.Repo)
+    :ok = Sandbox.checkout(HiringTestStone.Repo)
 
     unless tags[:async] do
-      Ecto.Adapters.SQL.Sandbox.mode(HiringTestStone.Repo, {:shared, self()})
+      Sandbox.mode(HiringTestStone.Repo, {:shared, self()})
     end
 
     :ok
