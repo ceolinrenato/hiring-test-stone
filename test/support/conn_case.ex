@@ -14,6 +14,7 @@ defmodule HiringTestStoneWeb.ConnCase do
   by setting `use HiringTestStoneWeb.ConnCase, async: true`, although
   this option is not recommendded for other databases.
   """
+  alias Ecto.Adapters.SQL.Sandbox
 
   use ExUnit.CaseTemplate
 
@@ -29,10 +30,10 @@ defmodule HiringTestStoneWeb.ConnCase do
   end
 
   setup tags do
-    :ok = Ecto.Adapters.SQL.Sandbox.checkout(HiringTestStone.Repo)
+    :ok = Sandbox.checkout(HiringTestStone.Repo)
 
     unless tags[:async] do
-      Ecto.Adapters.SQL.Sandbox.mode(HiringTestStone.Repo, {:shared, self()})
+      Sandbox.mode(HiringTestStone.Repo, {:shared, self()})
     end
 
     {:ok, conn: Phoenix.ConnTest.build_conn()}
