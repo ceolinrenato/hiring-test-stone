@@ -1,8 +1,8 @@
 defmodule HiringTestStone.TransactionTest do
   use HiringTestStone.DataCase
 
-  alias HiringTestStone.Transaction
   alias HiringTestStone.BankAccount
+  alias HiringTestStone.Transaction
 
   describe "transfer" do
     alias HiringTestStone.Transaction.Transfer
