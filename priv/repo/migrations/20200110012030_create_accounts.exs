@@ -5,6 +5,7 @@ defmodule HiringTestStone.Repo.Migrations.CreateAccounts do
     create table(:accounts) do
       add :number, :uuid
       add :password_hash, :string
+      add :balance, :float
       add :user_id, references(:users, on_delete: :delete_all), null: false
 
       timestamps()

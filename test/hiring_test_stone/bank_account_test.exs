@@ -64,9 +64,9 @@ defmodule HiringTestStone.BankAccountTest do
   describe "accounts" do
     alias HiringTestStone.BankAccount.{Account, User}
 
-    @valid_attrs %{number: "7488a646-e31f-11e4-aace-600308960662", password_hash: "some password_hash"}
-    @update_attrs %{number: "7488a646-e31f-11e4-aace-600308960668", password_hash: "some updated password_hash"}
-    @invalid_attrs %{number: nil, password_hash: nil}
+    @valid_attrs %{number: "7488a646-e31f-11e4-aace-600308960662", password_hash: "some password_hash", balance: 1_000}
+    @update_attrs %{number: "7488a646-e31f-11e4-aace-600308960668", password_hash: "some updated password_hash", balance: 950}
+    @invalid_attrs %{number: nil, password_hash: nil, balance: nil}
 
     def account_fixture(attrs \\ %{}) do
       user = user_fixture()

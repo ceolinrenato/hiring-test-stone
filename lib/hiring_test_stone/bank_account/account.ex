@@ -6,6 +6,7 @@ defmodule HiringTestStone.BankAccount.Account do
   schema "accounts" do
     field :number, Ecto.UUID
     field :password_hash, :string
+    field :balance, :float
     belongs_to :user, User
 
     timestamps()
@@ -14,7 +15,7 @@ defmodule HiringTestStone.BankAccount.Account do
   @doc false
   def changeset(account, attrs) do
     account
-    |> cast(attrs, [:number, :password_hash, :user_id])
-    |> validate_required([:number, :password_hash])
+    |> cast(attrs, [:number, :password_hash, :balance, :user_id])
+    |> validate_required([:number, :password_hash, :balance])
   end
 end
