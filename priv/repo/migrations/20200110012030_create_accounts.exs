@@ -13,5 +13,6 @@ defmodule HiringTestStone.Repo.Migrations.CreateAccounts do
     end
 
     create index(:accounts, [:user_id])
+    create unique_index(:accounts, [:number])
   end
 end
