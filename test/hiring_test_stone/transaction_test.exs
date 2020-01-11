@@ -45,7 +45,7 @@ defmodule HiringTestStone.TransactionTest do
 
     test "list_transfer/0 returns all transfer" do
       transfer = transfer_fixture()
-      assert Transaction.list_transfer() == [transfer]
+      assert Transaction.list_transfers() == [transfer]
     end
 
     test "get_transfer!/1 returns the transfer with given id" do

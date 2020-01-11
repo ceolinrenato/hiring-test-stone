@@ -19,6 +19,6 @@ defmodule HiringTestStone.BankAccount.Account do
   def changeset(account, attrs) do
     account
     |> cast(attrs, [:number, :password_hash, :balance, :user_id])
-    |> validate_required([:number, :password_hash, :balance, :user_id])
+    |> validate_required([:password_hash, :balance, :user_id])
   end
 end
