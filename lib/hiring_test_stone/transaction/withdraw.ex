@@ -2,6 +2,8 @@ defmodule HiringTestStone.Transaction.Withdraw do
   use Ecto.Schema
   import Ecto.Changeset
 
+  alias HiringTestStone.BankAccount.Account
+
   schema "withdraws" do
     field :amount, :float
     belongs_to :source_account, Account, foreign_key: :source_account_id
