@@ -105,8 +105,8 @@ defmodule HiringTestStone.Transaction do
 
   def transfer_money(source_account_number, destination_account_number, transfer_amount) do
     Multi.new()
-    |> Multi.run(:retrieve_source_account_step, retrieve_source_account(source_account_number))
-    |> Multi.run(:retrieve_destination_account_step, retrieve_destination_account(destination_account_number))
+    |> Multi.run(:retrieve_source_account_step, retrieve_account_by_number(source_account_number))
+    |> Multi.run(:retrieve_destination_account_step, retrieve_account_by_number(destination_account_number))
     |> Multi.run(:verify_balances_step, verify_balances(transfer_amount))
     |> Multi.run(:subtract_from_source_account_step, &subtract_from_source_account/2)
     |> Multi.run(:add_to_destination_account_step, &add_to_destination_account/2)
@@ -115,35 +115,19 @@ defmodule HiringTestStone.Transaction do
   end
 
   defp retrieve_account_by_number(account_number) do
-    case Account
-    |> where([account], account.number == ^account_number)
-    |> lock("FOR UPDATE")
-    |> Repo.one() do
-      %Account{} = account -> {:ok, account}
-      _ -> {:error, :account_not_found}
-    end
-  end
-
-  defp retrieve_source_account(source_account_number) do
-    fn _repo, _ ->
-      case retrieve_account_by_number(source_account_number) do
-        {:ok, source_account} -> {:ok, {source_account}}
-        _ -> {:error, :account_not_found}
-      end
-    end
-  end
-
-  defp retrieve_destination_account(destination_account_number) do
-    fn _repo, %{retrieve_source_account_step: {source_account}} ->
-      case retrieve_account_by_number(destination_account_number) do
-        {:ok, destination_account} -> {:ok, {source_account, destination_account}}
+    fn repo, _ ->
+      case Account
+      |> where([account], account.number == ^account_number)
+      |> lock("FOR UPDATE")
+      |> repo.one() do
+        %Account{} = account -> {:ok, account}
         _ -> {:error, :account_not_found}
       end
     end
   end
 
   defp verify_balances(transfer_amount) do
-    fn _repo, %{retrieve_destination_account_step: {source_account, destination_account}} ->
+    fn _repo, %{retrieve_source_account_step: source_account, retrieve_destination_account_step: destination_account} ->
       if source_account.balance < transfer_amount,
         do: {:error, :balance_too_low},
         else: {:ok, {source_account, destination_account, transfer_amount}}
