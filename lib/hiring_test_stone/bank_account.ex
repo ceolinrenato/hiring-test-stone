@@ -114,7 +114,9 @@ defmodule HiringTestStone.BankAccount do
 
   """
   def list_accounts do
-    Repo.all(Account)
+    Account
+    |> preload([:user])
+    |> Repo.all()
   end
 
   @doc """
@@ -131,7 +133,18 @@ defmodule HiringTestStone.BankAccount do
       ** (Ecto.NoResultsError)
 
   """
+
   def get_account!(id), do: Repo.get!(Account, id)
+
+  def get_account_by_number(<<_::288>> = account_number) do
+    Account
+      |> where([account], account.number == ^account_number)
+      |> preload(:user)
+      |> lock("FOR UPDATE")
+      |> Repo.one()
+  end
+
+  def get_account_by_number(_), do: {:error, :account_not_found}
 
   @doc """
   Creates a account.

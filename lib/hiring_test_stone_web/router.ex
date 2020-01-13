@@ -7,5 +7,6 @@ defmodule HiringTestStoneWeb.Router do
 
   scope "/api", HiringTestStoneWeb do
     pipe_through :api
+    resources "/bank_accounts", BankAccountController, only: [:index, :show]
   end
 end

@@ -81,7 +81,7 @@ defmodule HiringTestStone.BankAccountTest do
 
     test "list_accounts/0 returns all accounts" do
       account = account_fixture()
-      assert BankAccount.list_accounts() == [account]
+      assert BankAccount.list_accounts() == [Account |> where([acc], acc.id == ^account.id) |> preload(:user) |> Repo.one()]
     end
 
     test "get_account!/1 returns the account with given id" do

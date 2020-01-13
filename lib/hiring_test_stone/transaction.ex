@@ -128,23 +128,15 @@ defmodule HiringTestStone.Transaction do
     |> Repo.transaction()
   end
 
-  defp retrieve_account_by_number(<<_::288>> = account_number) do
-    fn repo, _ ->
-      case Account
-      |> where([account], account.number == ^account_number)
-      |> lock("FOR UPDATE")
-      |> repo.one() do
+  defp retrieve_account_by_number(account_number) do
+    fn _repo, _ ->
+      case HiringTestStone.BankAccount.get_account_by_number(account_number) do
         %Account{} = account -> {:ok, account}
         _ -> {:error, :account_not_found}
       end
     end
   end
 
-  defp retrieve_account_by_number(_) do
-    fn _repo, _ ->
-      {:error, :account_not_found}
-    end
-  end
 
   defp verify_balance(amount) do
     fn _repo, %{retrieve_source_account_step: source_account} ->
