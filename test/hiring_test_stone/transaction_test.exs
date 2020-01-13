@@ -94,7 +94,7 @@ defmodule HiringTestStone.TransactionTest do
       source_account = account_fixture()
       destination_account = account_fixture()
       {:ok, %{subtract_from_source_account_step: subtracted_account}} =
-        Transaction.transfer_money(source_account.number, destination_account.number, 1_000)
+        Transaction.transfer_money(source_account.number, destination_account.number, source_account.balance)
       assert subtracted_account.balance == 0
     end
 
@@ -102,8 +102,8 @@ defmodule HiringTestStone.TransactionTest do
       source_account = account_fixture()
       destination_account = account_fixture()
       {:ok, %{add_to_destination_account_step: increased_account}} =
-        Transaction.transfer_money(source_account.number, destination_account.number, 1_000)
-      assert increased_account.balance == 2_000
+        Transaction.transfer_money(source_account.number, destination_account.number, source_account.balance)
+      assert increased_account.balance == destination_account.balance + source_account.balance
     end
 
     test "transfer_money/3 with valid conditions register a transfer transaction" do
@@ -117,7 +117,7 @@ defmodule HiringTestStone.TransactionTest do
     test "transfer_money/3 returns an error when source account balance is unsufficient" do
       source_account = account_fixture(%{balance: 500})
       destination_account = account_fixture()
-      assert {:error, :verify_balances_step, :balance_too_low, _} = Transaction.transfer_money(source_account.number, destination_account.number, 1_000)
+      assert {:error, :verify_balance_step, :balance_too_low, _} = Transaction.transfer_money(source_account.number, destination_account.number, 1_000)
     end
 
     test "transfer_money/3 returns an error when source account is not found" do
@@ -128,6 +128,25 @@ defmodule HiringTestStone.TransactionTest do
     test "transfer_money/3 returns an error when destination account is not found" do
       source_account = account_fixture()
       assert {:error, :retrieve_destination_account_step, :account_not_found, _} = Transaction.transfer_money(source_account.number, Ecto.UUID.generate, 1_000)
+    end
+
+    test "withdraw_money/2 substracts from source_account" do
+      source_account = account_fixture()
+      {:ok, %{subtract_from_source_account_step: subtracted_account}}
+        = Transaction.withdraw_money(source_account.number, source_account.balance)
+      assert subtracted_account.balance == 0
+    end
+
+    test "withdraw_money/2 returns and error when source account balance is unsufficient" do
+      source_account = account_fixture(%{balance: 500})
+      assert {:error, :verify_balance_step, :balance_too_low, _} = Transaction.withdraw_money(source_account.number, 1_000)
+    end
+
+    test "withdraw_money/2 with valid conditions register a withdraw transaction" do
+      source_account = account_fixture()
+      {:ok, %{register_withdraw_transaction_step: withdraw_transaction}} =
+        Transaction.withdraw_money(source_account.number, source_account.balance)
+      assert Transaction.list_withdraws == [withdraw_transaction]
     end
   end
 end

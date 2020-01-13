@@ -8,6 +8,7 @@ defmodule HiringTestStone.Transaction do
   alias HiringTestStone.BankAccount.Account
   alias HiringTestStone.Repo
   alias HiringTestStone.Transaction.Transfer
+  alias HiringTestStone.Transaction.Withdraw
 
   @doc """
   Returns the list of transfer.
@@ -103,18 +104,31 @@ defmodule HiringTestStone.Transaction do
     Transfer.changeset(transfer, %{})
   end
 
+  def list_withdraws do
+    Repo.all(Withdraw)
+  end
+
   def transfer_money(source_account_number, destination_account_number, transfer_amount) do
     Multi.new()
     |> Multi.run(:retrieve_source_account_step, retrieve_account_by_number(source_account_number))
     |> Multi.run(:retrieve_destination_account_step, retrieve_account_by_number(destination_account_number))
-    |> Multi.run(:verify_balances_step, verify_balances(transfer_amount))
+    |> Multi.run(:verify_balance_step, verify_balance(transfer_amount))
     |> Multi.run(:subtract_from_source_account_step, &subtract_from_source_account/2)
     |> Multi.run(:add_to_destination_account_step, &add_to_destination_account/2)
     |> Multi.run(:register_transfer_transaction_step, &register_transfer_transaction/2)
     |> Repo.transaction()
   end
 
-  defp retrieve_account_by_number(account_number) do
+  def withdraw_money(source_account_number, amount) do
+    Multi.new()
+    |> Multi.run(:retrieve_source_account_step, retrieve_account_by_number(source_account_number))
+    |> Multi.run(:verify_balance_step, verify_balance(amount))
+    |> Multi.run(:subtract_from_source_account_step, &subtract_from_source_account/2)
+    |> Multi.run(:register_withdraw_transaction_step, &register_withdraw_transaction/2)
+    |> Repo.transaction()
+  end
+
+  defp retrieve_account_by_number(<<_::288>> = account_number) do
     fn repo, _ ->
       case Account
       |> where([account], account.number == ^account_number)
@@ -126,32 +140,49 @@ defmodule HiringTestStone.Transaction do
     end
   end
 
-  defp verify_balances(transfer_amount) do
-    fn _repo, %{retrieve_source_account_step: source_account, retrieve_destination_account_step: destination_account} ->
-      if source_account.balance < transfer_amount,
-        do: {:error, :balance_too_low},
-        else: {:ok, {source_account, destination_account, transfer_amount}}
+  defp retrieve_account_by_number(_) do
+    fn _repo, _ ->
+      {:error, :account_not_found}
     end
   end
 
-  defp subtract_from_source_account(repo, %{verify_balances_step: {source_account, _, verified_amount}}) do
+  defp verify_balance(amount) do
+    fn _repo, %{retrieve_source_account_step: source_account} ->
+      if source_account.balance < amount,
+        do: {:error, :balance_too_low},
+        else: {:ok, {source_account, amount}}
+    end
+  end
+
+  defp subtract_from_source_account(repo, %{verify_balance_step: {source_account, verified_amount}}) do
     source_account
     |> Account.changeset(%{balance: source_account.balance - verified_amount})
     |> repo.update()
   end
 
-  defp add_to_destination_account(repo, %{verify_balances_step: {_, destination_account, verified_amount}}) do
+  defp add_to_destination_account(repo, %{verify_balance_step: {_, verified_amount}, retrieve_destination_account_step: destination_account}) do
     destination_account
     |> Account.changeset(%{balance: destination_account.balance + verified_amount})
     |> repo.update()
   end
 
-  defp register_transfer_transaction(repo, %{verify_balances_step: {source_account, destination_account, verified_amount}}) do
+  defp register_transfer_transaction(repo, %{verify_balance_step: {source_account, verified_amount}, retrieve_destination_account_step: destination_account}) do
     %Transfer{}
     |> Transfer.changeset(
       %{
         source_account_id: source_account.id,
         destination_account_id: destination_account.id,
+        amount: verified_amount
+      }
+    )
+    |> repo.insert()
+  end
+
+  defp register_withdraw_transaction(repo, %{verify_balance_step: {source_account, verified_amount}}) do
+    %Withdraw{}
+    |> Withdraw.changeset(
+      %{
+        source_account_id: source_account.id,
         amount: verified_amount
       }
     )
