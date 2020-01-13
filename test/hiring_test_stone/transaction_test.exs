@@ -24,7 +24,7 @@ defmodule HiringTestStone.TransactionTest do
       user = user_fixture()
       {:ok, account} =
         attrs
-        |> Enum.into(%{number: "7488a646-e31f-11e4-aace-600308960662", password_hash: "some password_hash", balance: 1_000})
+        |> Enum.into(%{password_hash: "some password_hash", balance: 1_000})
         |> Enum.into(%{user_id: user.id})
         |> BankAccount.create_account()
 
@@ -45,7 +45,7 @@ defmodule HiringTestStone.TransactionTest do
 
     test "list_transfer/0 returns all transfer" do
       transfer = transfer_fixture()
-      assert Transaction.list_transfer() == [transfer]
+      assert Transaction.list_transfers() == [transfer]
     end
 
     test "get_transfer!/1 returns the transfer with given id" do
@@ -88,6 +88,46 @@ defmodule HiringTestStone.TransactionTest do
     test "change_transfer/1 returns a transfer changeset" do
       transfer = transfer_fixture()
       assert %Ecto.Changeset{} = Transaction.change_transfer(transfer)
+    end
+
+    test "transfer_money/3 subtracts from source_account" do
+      source_account = account_fixture()
+      destination_account = account_fixture()
+      {:ok, %{subtract_from_source_account_step: subtracted_account}} =
+        Transaction.transfer_money(source_account.number, destination_account.number, 1_000)
+      assert subtracted_account.balance == 0
+    end
+
+    test "transfer_money/3 adds to destination_account" do
+      source_account = account_fixture()
+      destination_account = account_fixture()
+      {:ok, %{add_to_destination_account_step: increased_account}} =
+        Transaction.transfer_money(source_account.number, destination_account.number, 1_000)
+      assert increased_account.balance == 2_000
+    end
+
+    test "transfer_money/3 with valid conditions register a transfer transaction" do
+      source_account = account_fixture()
+      destination_account = account_fixture()
+      {:ok, %{register_transfer_transaction_step: transfer_transaction}} =
+        Transaction.transfer_money(source_account.number, destination_account.number, 1_000)
+      assert Transaction.list_transfers == [transfer_transaction]
+    end
+
+    test "transfer_money/3 returns an error when source account balance is unsufficient" do
+      source_account = account_fixture(%{balance: 500})
+      destination_account = account_fixture()
+      assert {:error, :verify_balances_step, :balance_too_low, _} = Transaction.transfer_money(source_account.number, destination_account.number, 1_000)
+    end
+
+    test "transfer_money/3 returns an error when source account is not found" do
+      destination_account = account_fixture()
+      assert {:error, :retrieve_source_account_step, :account_not_found, _} = Transaction.transfer_money(Ecto.UUID.generate, destination_account.number, 1_000)
+    end
+
+    test "transfer_money/3 returns an error when destination account is not found" do
+      source_account = account_fixture()
+      assert {:error, :retrieve_destination_account_step, :account_not_found, _} = Transaction.transfer_money(source_account.number, Ecto.UUID.generate, 1_000)
     end
   end
 end

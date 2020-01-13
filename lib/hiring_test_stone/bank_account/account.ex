@@ -5,7 +5,7 @@ defmodule HiringTestStone.BankAccount.Account do
   import Ecto.Changeset
 
   schema "accounts" do
-    field :number, Ecto.UUID
+    field :number, Ecto.UUID, read_after_writes: true
     field :password_hash, :string
     field :balance, :float
     belongs_to :user, User
@@ -18,7 +18,9 @@ defmodule HiringTestStone.BankAccount.Account do
   @doc false
   def changeset(account, attrs) do
     account
-    |> cast(attrs, [:number, :password_hash, :balance, :user_id])
-    |> validate_required([:number, :password_hash, :balance, :user_id])
+    |> cast(attrs, [:password_hash, :balance, :user_id])
+    |> validate_required([:password_hash, :balance, :user_id])
+    |> foreign_key_constraint(:user_id)
+    |> unique_constraint(:number)
   end
 end
