@@ -122,7 +122,7 @@ defmodule HiringTestStone.TransactionTest do
 
     test "transfer_money/3 returns an error when source account is not found" do
       destination_account = account_fixture()
-      assert {:error, :retrieve_source_account_step, :account_not_found, _} = Transaction.transfer_money(Ecto.UUID.generate, destination_account.number, 1_000)
+      assert {:error, :retrieve_source_account_step, :account_not_found, _} = Transaction.transfer_money("not_a_account", destination_account.number, 1_000)
     end
 
     test "transfer_money/3 returns an error when destination account is not found" do
@@ -137,9 +137,13 @@ defmodule HiringTestStone.TransactionTest do
       assert subtracted_account.balance == 0
     end
 
-    test "withdraw_money/2 returns and error when source account balance is unsufficient" do
+    test "withdraw_money/2 returns an error when source account balance is unsufficient" do
       source_account = account_fixture(%{balance: 500})
       assert {:error, :verify_balance_step, :balance_too_low, _} = Transaction.withdraw_money(source_account.number, 1_000)
+    end
+
+    test "withdraw_money/2 returns an error when source account is not found" do
+      assert {:error, :retrieve_source_account_step, :account_not_found, _} = Transaction.withdraw_money("not a account", 500)
     end
 
     test "withdraw_money/2 with valid conditions register a withdraw transaction" do
