@@ -14,12 +14,10 @@ defmodule HiringTestStoneWeb.ErrorView do
     %{errors: %{detail: Phoenix.Controller.status_message_from_template(template)}}
   end
 
-  def render("400.json", %{error: %{name: name, detail: detail}}) do
-    %{errors: %{name: name, detail: detail}}
-  end
-
-  def render("400.json", %{error: error}) do
-    %{errors: %{detail: error}}
+  def render("422.json", %{changeset: changeset}) do
+    %{
+      errors: Ecto.Changeset.traverse_errors(changeset, &translate_error/1)
+    }
   end
 
 end

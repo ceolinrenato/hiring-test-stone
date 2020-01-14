@@ -10,6 +10,13 @@ defmodule HiringTestStone.Transaction do
   alias HiringTestStone.Transaction.Transfer
   alias HiringTestStone.Transaction.Withdraw
 
+  @transaction_schema %{
+    transaction_type: :string,
+    source_account: Ecto.UUID,
+    destination_account: Ecto.UUID,
+    amount: :float
+  }
+
   @doc """
   Returns the list of transfer.
 
@@ -106,6 +113,13 @@ defmodule HiringTestStone.Transaction do
 
   def list_withdraws do
     Repo.all(Withdraw)
+  end
+
+  def withdraw_changeset(%{} = params) do
+    {%{}, @transaction_schema}
+    |> Ecto.Changeset.cast(params, [:transaction_type, :source_account, :amount])
+    |> Ecto.Changeset.validate_required([:source_account, :amount])
+    |> Ecto.Changeset.validate_inclusion(:transaction_type, ["withdraw"])
   end
 
   def transfer_money(source_account_number, destination_account_number, transfer_amount) do
