@@ -135,6 +135,7 @@ defmodule HiringTestStone.Transaction do
     Multi.new()
     |> Multi.run(:retrieve_source_account_step, retrieve_account_by_number(source_account_number))
     |> Multi.run(:retrieve_destination_account_step, retrieve_account_by_number(destination_account_number))
+    |> Multi.run(:verify_accounts_step, &verify_accounts/2)
     |> Multi.run(:verify_balance_step, verify_balance(transfer_amount))
     |> Multi.run(:subtract_from_source_account_step, &subtract_from_source_account/2)
     |> Multi.run(:add_to_destination_account_step, &add_to_destination_account/2)
@@ -166,6 +167,12 @@ defmodule HiringTestStone.Transaction do
         do: {:error, :balance_too_low},
         else: {:ok, {source_account, amount}}
     end
+  end
+
+  defp verify_accounts(_repo, %{retrieve_source_account_step: source_account, retrieve_destination_account_step: destination_account}) do
+    if source_account.id == destination_account.id,
+      do: {:error, :source_equal_to_destination},
+      else: {:ok}
   end
 
   defp subtract_from_source_account(repo, %{verify_balance_step: {source_account, verified_amount}}) do
