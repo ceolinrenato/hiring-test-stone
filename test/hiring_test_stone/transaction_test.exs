@@ -130,6 +130,25 @@ defmodule HiringTestStone.TransactionTest do
       assert {:error, :retrieve_destination_account_step, :account_not_found, _} = Transaction.transfer_money(source_account.number, Ecto.UUID.generate, 1_000)
     end
 
+    test "transfer_money/3 returns an error when transfer amount is not greater than 0" do
+      source_account = account_fixture()
+      destination_account = account_fixture()
+      assert {:error, :register_transfer_transaction_step, _, _} = Transaction.transfer_money(source_account.number, destination_account.number, 0)
+    end
+
+    test "transfer_money/3 returns an error when trying to transfer to the same account" do
+      source_account = account_fixture()
+      assert {:error, :verify_accounts_step, :source_equal_to_destination, _} = Transaction.transfer_money(source_account.number, source_account.number, 100)
+    end
+
+    test "transfer_money/3 rollback account balance changes on error" do
+      source_account = account_fixture()
+      destination_account = account_fixture()
+      Transaction.transfer_money(source_account.number, destination_account.number, -200)
+      assert {BankAccount.get_account!(source_account.id).balance == source_account.balance}
+      assert {BankAccount.get_account!(destination_account.id).balance == destination_account.balance}
+    end
+
     test "withdraw_money/2 substracts from source_account" do
       source_account = account_fixture()
       {:ok, %{subtract_from_source_account_step: subtracted_account}}
@@ -144,6 +163,17 @@ defmodule HiringTestStone.TransactionTest do
 
     test "withdraw_money/2 returns an error when source account is not found" do
       assert {:error, :retrieve_source_account_step, :account_not_found, _} = Transaction.withdraw_money("not a account", 500)
+    end
+
+    test "withdraw_money/2 returns an error when withdraw amount is not greater than 0" do
+      source_account = account_fixture()
+      assert {:error, :register_withdraw_transaction_step, _ , _} = Transaction.withdraw_money(source_account.number, 0)
+    end
+
+    test "withdraw_money/2 rollback account balance changes on error" do
+      source_account = account_fixture()
+      Transaction.withdraw_money(source_account.number, -200)
+      assert {BankAccount.get_account!(source_account.id).balance == source_account.balance}
     end
 
     test "withdraw_money/2 with valid conditions register a withdraw transaction" do
