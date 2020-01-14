@@ -172,7 +172,7 @@ defmodule HiringTestStone.Transaction do
   defp verify_accounts(_repo, %{retrieve_source_account_step: source_account, retrieve_destination_account_step: destination_account}) do
     if source_account.id == destination_account.id,
       do: {:error, :source_equal_to_destination},
-      else: {:ok}
+      else: {:ok, {source_account, destination_account}}
   end
 
   defp subtract_from_source_account(repo, %{verify_balance_step: {source_account, verified_amount}}) do
