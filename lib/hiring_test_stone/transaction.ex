@@ -118,8 +118,17 @@ defmodule HiringTestStone.Transaction do
   def withdraw_changeset(%{} = params) do
     {%{}, @transaction_schema}
     |> Ecto.Changeset.cast(params, [:transaction_type, :source_account, :amount])
-    |> Ecto.Changeset.validate_required([:source_account, :amount])
+    |> Ecto.Changeset.validate_required([:transaction_type, :source_account, :amount])
     |> Ecto.Changeset.validate_inclusion(:transaction_type, ["withdraw"])
+    |> Ecto.Changeset.validate_number(:amount, greater_than: 0)
+  end
+
+  def transfer_changeset(%{} = params) do
+    {%{}, @transaction_schema}
+    |> Ecto.Changeset.cast(params, [:transaction_type, :source_account, :destination_account, :amount])
+    |> Ecto.Changeset.validate_required([:transaction_type, :source_account, :destination_account, :amount])
+    |> Ecto.Changeset.validate_inclusion(:transaction_type, ["transfer"])
+    |> Ecto.Changeset.validate_number(:amount, greater_than: 0)
   end
 
   def transfer_money(source_account_number, destination_account_number, transfer_amount) do
