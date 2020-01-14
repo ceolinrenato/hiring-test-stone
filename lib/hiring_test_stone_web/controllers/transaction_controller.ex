@@ -11,9 +11,7 @@ defmodule HiringTestStoneWeb.TransactionController do
     case Transaction.withdraw_changeset(params) do
       %{valid?: false} = changeset ->
         conn
-        |> put_status(:unprocessable_entity)
-        |> put_view(ErrorView)
-        |> render("422.json", %{changeset: changeset})
+        |> render_unprocessable(changeset)
       _ = changeset ->
         conn
         |> perform_withdraw(changeset)
@@ -24,9 +22,7 @@ defmodule HiringTestStoneWeb.TransactionController do
     case Transaction.transfer_changeset(params) do
       %{valid?: false} = changeset ->
         conn
-        |> put_status(:unprocessable_entity)
-        |> put_view(ErrorView)
-        |> render("422.json", %{changeset: changeset})
+        |> render_unprocessable(changeset)
       _ = changeset ->
         conn
         |> perform_transfer(changeset)
@@ -35,9 +31,14 @@ defmodule HiringTestStoneWeb.TransactionController do
 
   def create(conn, params) do
     conn
-    |> put_status(:unprocessable_entity)
-    |> put_view(ErrorView)
-    |> render("422.json", %{changeset: Transaction.withdraw_changeset(params)})
+    |> render_unprocessable(Transaction.withdraw_changeset(params))
+  end
+
+  defp render_unprocessable(conn, changeset) do
+    conn
+      |> put_status(:unprocessable_entity)
+      |> put_view(ErrorView)
+      |> render("422.json", %{changeset: changeset})
   end
 
   defp perform_withdraw(conn, %Ecto.Changeset{changes: %{source_account: source_account_number, amount: amount}}) do
