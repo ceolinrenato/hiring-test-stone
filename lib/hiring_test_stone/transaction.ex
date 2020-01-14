@@ -137,7 +137,6 @@ defmodule HiringTestStone.Transaction do
     end
   end
 
-
   defp verify_balance(amount) do
     fn _repo, %{retrieve_source_account_step: source_account} ->
       if source_account.balance < amount,
