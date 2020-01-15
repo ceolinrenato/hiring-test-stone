@@ -9,7 +9,6 @@ defmodule HiringTestStoneWeb.BankAccountController do
     render(conn, "index.json", bank_accounts: BankAccount.list_accounts)
   end
 
-  @spec show(Plug.Conn.t(), nil | keyword | map) :: Plug.Conn.t()
   def show(conn, %{"id" => account_number}) do
     case BankAccount.get_account_by_number(account_number) do
       %Account{} = account -> render(conn, "show.json", bank_account: account)
