@@ -8,7 +8,8 @@ defmodule HiringTestStoneWeb.TransactionController do
   @transaction_transfer "transfer"
 
   def create(conn, %{"transaction_type" => @transaction_withdraw} = params) do
-    case Transaction.withdraw_changeset(params) do
+    withdraw_params = params |> Enum.into(%{"source_account" => conn.assigns[:authenticated_account].number})
+    case Transaction.withdraw_changeset(withdraw_params) do
       %{valid?: false} = changeset ->
         conn
         |> render_unprocessable(changeset)
@@ -19,7 +20,8 @@ defmodule HiringTestStoneWeb.TransactionController do
   end
 
   def create(conn, %{"transaction_type" => @transaction_transfer} = params) do
-    case Transaction.transfer_changeset(params) do
+    transfer_params = params |> Enum.into(%{"source_account" => conn.assigns[:authenticated_account].number})
+    case Transaction.transfer_changeset(transfer_params) do
       %{valid?: false} = changeset ->
         conn
         |> render_unprocessable(changeset)

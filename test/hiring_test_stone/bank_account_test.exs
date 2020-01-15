@@ -64,8 +64,8 @@ defmodule HiringTestStone.BankAccountTest do
   describe "accounts" do
     alias HiringTestStone.BankAccount.{Account, User}
 
-    @valid_attrs %{password_hash: "some password_hash", balance: 1_000}
-    @update_attrs %{password_hash: "some updated password_hash", balance: 950}
+    @valid_attrs %{password: "123456", password_confirmation: "123456", balance: 1_000}
+    @update_attrs %{balance: 950}
     @invalid_attrs %{password_hash: nil, balance: nil}
 
     def account_fixture(attrs \\ %{}) do
@@ -95,7 +95,7 @@ defmodule HiringTestStone.BankAccountTest do
         @valid_attrs
         |> Enum.into(%{user_id: user.id})
         |> BankAccount.create_account()
-      assert account.password_hash == "some password_hash"
+      assert account.balance == 1000
     end
 
     test "create_account/1 with invalid data returns error changeset" do
@@ -105,7 +105,7 @@ defmodule HiringTestStone.BankAccountTest do
     test "update_account/2 with valid data updates the account" do
       account = account_fixture()
       assert {:ok, %Account{} = account} = BankAccount.update_account(account, @update_attrs)
-      assert account.password_hash == "some updated password_hash"
+      assert account.balance == 950
     end
 
     test "update_account/2 with invalid data returns error changeset" do

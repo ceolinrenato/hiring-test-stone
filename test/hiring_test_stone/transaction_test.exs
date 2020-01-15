@@ -24,7 +24,7 @@ defmodule HiringTestStone.TransactionTest do
       user = user_fixture()
       {:ok, account} =
         attrs
-        |> Enum.into(%{password_hash: "some password_hash", balance: 1_000})
+        |> Enum.into(%{password: "123456", balance: 1_000})
         |> Enum.into(%{user_id: user.id})
         |> BankAccount.create_account()
 

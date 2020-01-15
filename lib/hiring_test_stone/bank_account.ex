@@ -161,6 +161,7 @@ defmodule HiringTestStone.BankAccount do
   def create_account(attrs \\ %{}) do
     %Account{}
     |> Account.changeset(attrs)
+    |> Ecto.Changeset.validate_required([:password_hash])
     |> Repo.insert()
   end
 
@@ -209,5 +210,17 @@ defmodule HiringTestStone.BankAccount do
   """
   def change_account(%Account{} = account) do
     Account.changeset(account, %{})
+  end
+
+  def find_account_by_number_and_password(%Plug.Conn{} = conn, account_number, password) do
+    case(
+      Account
+      |> where([account], account.number == ^account_number)
+      |> Repo.one()
+      |> Argon2.check_pass(password)
+    ) do
+      {:ok, account} -> Plug.Conn.assign(conn, :authenticated_account, account)
+      {:error, _} -> Plug.Conn.halt(conn)
+    end
   end
 end
