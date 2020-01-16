@@ -53,3 +53,11 @@ config :logger, level: :info
 # Finally import the config/prod.secret.exs which loads secrets
 # and configuration from environment variables.
 import_config "prod.secret.exs"
+
+# Admin Area config
+config :basic_auth,
+  admin_auth: [
+    username: {:system, "BASIC_AUTH_USERNAME"},
+    password: {:system, "BASIC_AUTH_PASSWORD"},
+    realm: "Admin Area"
+  ]

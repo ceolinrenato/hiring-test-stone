@@ -20,3 +20,11 @@ config :logger, level: :warn
 config :argon2_elixir,
   t_cost: 1,
   m_cost: 8
+
+# Admin Area config
+config :basic_auth,
+  admin_auth: [
+    username: "admin",
+    password: "admin",
+    realm: "Admin Area"
+  ]
