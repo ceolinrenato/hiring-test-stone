@@ -227,7 +227,7 @@ defmodule HiringTestStone.BankAccount do
       Account
       |> where([account], account.number == ^account_number)
       |> Repo.one()
-      |> Argon2.check_pass(password)
+      |> Bcrypt.check_pass(password)
     ) do
       {:ok, account} -> Plug.Conn.assign(conn, :authenticated_account, account)
       {:error, _} -> Plug.Conn.halt(conn)

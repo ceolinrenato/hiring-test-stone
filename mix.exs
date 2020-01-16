@@ -43,7 +43,7 @@ defmodule HiringTestStone.MixProject do
       {:plug_cowboy, "~> 2.0"},
       {:credo, "~> 1.1.0", only: [:dev, :test], runtime: false},
       {:basic_auth, "~> 2.2.2"},
-      {:argon2_elixir, "~> 2.0"},
+      {:bcrypt_elixir, "~> 2.0"},
       {:faker, "~> 0.13", only: :test}
     ]
   end

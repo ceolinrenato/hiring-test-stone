@@ -41,7 +41,7 @@ defmodule HiringTestStone.BankAccount.Account do
 
   defp put_pass_hash(%Ecto.Changeset{valid?: true, changes: %{password: password}} = changeset) do
     changeset
-    |> change(Argon2.add_hash(password))
+    |> change(Bcrypt.add_hash(password))
   end
 
   defp put_pass_hash(%Ecto.Changeset{} = changeset) do

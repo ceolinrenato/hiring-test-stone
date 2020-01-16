@@ -1,6 +1,6 @@
 %{
-  "argon2_elixir": {:hex, :argon2_elixir, "2.1.2", "c276b960f0b550a7613a9bebf8e14645ca5eb71a34a1bf0f896fe3511966b051", [:make, :mix], [{:comeonin, "~> 5.1", [hex: :comeonin, repo: "hexpm", optional: false]}, {:elixir_make, "~> 0.5", [hex: :elixir_make, repo: "hexpm", optional: false]}], "hexpm"},
   "basic_auth": {:hex, :basic_auth, "2.2.4", "d8c748237870dd1df3bc5c0f1ab4f1fad6270c75472d7e62b19302ec59e92a79", [:mix], [{:plug, "~> 0.14 or ~> 1.0", [hex: :plug, repo: "hexpm", optional: false]}], "hexpm"},
+  "bcrypt_elixir": {:hex, :bcrypt_elixir, "2.0.3", "64e0792d5b5064391927bf3b8e436994cafd18ca2d2b76dea5c76e0adcf66b7c", [:make, :mix], [{:comeonin, "~> 5.1", [hex: :comeonin, repo: "hexpm", optional: false]}, {:elixir_make, "~> 0.4", [hex: :elixir_make, repo: "hexpm", optional: false]}], "hexpm"},
   "bunt": {:hex, :bunt, "0.2.0", "951c6e801e8b1d2cbe58ebbd3e616a869061ddadcc4863d0a2182541acae9a38", [:mix], [], "hexpm"},
   "comeonin": {:hex, :comeonin, "5.1.3", "4c9880ed348cc0330c74086b4383ffb0b5a599aa603416497b7374c168cae340", [:mix], [], "hexpm"},
   "connection": {:hex, :connection, "1.0.4", "a1cae72211f0eef17705aaededacac3eb30e6625b04a6117c1b2db6ace7d5976", [:mix], [], "hexpm"},
