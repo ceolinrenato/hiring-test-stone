@@ -20,7 +20,7 @@ defmodule HiringTestStoneWeb.BankAccountControllerTest do
       password_confirmation: @fixture_account_password,
       user: %{
         name: "John Doe",
-        email: "johndoe@example.com"
+        email: Faker.Internet.email
       }
     }
 
@@ -144,6 +144,35 @@ defmodule HiringTestStoneWeb.BankAccountControllerTest do
   describe "show/2" do
     test "Responds with account if account is exits", %{conn: conn} do
       account = account_fixture()
+      target_account = account_fixture()
+
+      response =
+        conn
+        |> using_basic_auth(account.number, @fixture_account_password)
+        |> get(
+          Routes.bank_account_path(
+            conn,
+            :show,
+            target_account.number
+          )
+        )
+        |> json_response(200)
+
+      expected = %{
+        "data" => %{
+          "number" => target_account.number,
+          "user" => %{
+            "name" => target_account.user.name,
+            "email" => target_account.user.email
+          }
+        }
+      }
+
+      assert response == expected
+    end
+
+    test "Renders account balance if request account is the same as the authenticated one", %{conn: conn} do
+      account = account_fixture()
 
       response =
         conn
@@ -160,6 +189,7 @@ defmodule HiringTestStoneWeb.BankAccountControllerTest do
       expected = %{
         "data" => %{
           "number" => account.number,
+          "balance" => account.balance,
           "user" => %{
             "name" => account.user.name,
             "email" => account.user.email

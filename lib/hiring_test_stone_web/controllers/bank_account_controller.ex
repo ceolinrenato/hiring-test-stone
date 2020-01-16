@@ -14,7 +14,9 @@ defmodule HiringTestStoneWeb.BankAccountController do
   def show(conn, %{"id" => account_number}) do
     case BankAccount.get_account_by_number(account_number) do
       %Account{} = account ->
-        render(conn, "show.json", bank_account: account)
+        if account.id == conn.assigns[:authenticated_account].id,
+          do: render(conn, "show.json", bank_account: account, with_balance: true),
+          else: render(conn, "show.json", bank_account: account)
 
       {:error, :account_not_found} ->
         conn
