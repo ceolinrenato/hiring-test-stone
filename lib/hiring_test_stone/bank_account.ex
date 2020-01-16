@@ -218,7 +218,11 @@ defmodule HiringTestStone.BankAccount do
     |> Repo.insert()
   end
 
-  def find_account_by_number_and_password(%Plug.Conn{} = conn, account_number, password) do
+  def find_account_by_number_and_password(
+        %Plug.Conn{} = conn,
+        <<_::288>> = account_number,
+        password
+      ) do
     case(
       Account
       |> where([account], account.number == ^account_number)
@@ -228,5 +232,9 @@ defmodule HiringTestStone.BankAccount do
       {:ok, account} -> Plug.Conn.assign(conn, :authenticated_account, account)
       {:error, _} -> Plug.Conn.halt(conn)
     end
+  end
+
+  def find_account_by_number_and_password(%Plug.Conn{} = conn, _, _) do
+    Plug.Conn.halt(conn)
   end
 end
