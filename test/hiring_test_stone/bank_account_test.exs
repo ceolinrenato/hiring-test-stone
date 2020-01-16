@@ -124,5 +124,33 @@ defmodule HiringTestStone.BankAccountTest do
       account = account_fixture()
       assert %Ecto.Changeset{} = BankAccount.change_account(account)
     end
+
+    test "register_bank_account/1 with valid data creates an account and a user" do
+      attrs = %{
+        balance: 1_000,
+        password: "123456",
+        password_confirmation: "123456",
+        user: %{
+          name: "John Doe",
+          email: "johndoe@example.com"
+        }
+      }
+      assert {:ok, %Account{} = account} = BankAccount.register_bank_account(attrs)
+      assert account.user.id != nil
+      assert account.id != nil
+    end
+
+    test "register_bank_account/1 with invalid data returns error changeset" do
+      attrs = %{
+        balance: 1_000,
+        password: "123456",
+        password_confirmation: "123456",
+        user: %{
+          name: "John Doe",
+        }
+      }
+      assert {:error, %Ecto.Changeset{changes: %{user: %{errors: [email: _]}}}} =
+        BankAccount.register_bank_account(attrs)
+    end
   end
 end

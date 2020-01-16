@@ -212,6 +212,12 @@ defmodule HiringTestStone.BankAccount do
     Account.changeset(account, %{})
   end
 
+  def register_bank_account(attrs \\ %{}) do
+    %Account{}
+    |> Account.changeset_with_user(attrs)
+    |> Repo.insert()
+  end
+
   def find_account_by_number_and_password(%Plug.Conn{} = conn, account_number, password) do
     case(
       Account

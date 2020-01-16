@@ -29,6 +29,16 @@ defmodule HiringTestStone.BankAccount.Account do
     |> put_pass_hash
   end
 
+  def changeset_with_user(account, attrs) do
+    account
+    |> cast(attrs, [:password, :balance])
+    |> cast_assoc(:user, with: &User.changeset/2)
+    |> validate_required([:password, :balance, :user])
+    |> validate_confirmation(:password)
+    |> unique_constraint(:number)
+    |> put_pass_hash
+  end
+
   defp put_pass_hash(%Ecto.Changeset{valid?: true, changes: %{password: password}} = changeset) do
     changeset
     |> change(Argon2.add_hash(password))
