@@ -9,6 +9,10 @@ defmodule HiringTestStoneWeb.BankAccountView do
     %{data: render_one(account, HiringTestStoneWeb.BankAccountView, "account.json")}
   end
 
+  def render("create.json", %{bank_account: account}) do
+    %{data: render_one(account, HiringTestStoneWeb.BankAccountView, "account.json")}
+  end
+
   def render("account.json", %{bank_account: account}) do
     %{
       number: account.number,

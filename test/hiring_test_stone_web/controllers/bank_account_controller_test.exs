@@ -69,7 +69,7 @@ defmodule HiringTestStoneWeb.BankAccountControllerTest do
         )
         |> json_response(201)
 
-      assert BankAccount.get_account_by_number(response["data"]["number"]) == 1_000
+      assert BankAccount.get_account_by_number(response["data"]["number"]).balance == 1_000
     end
   end
 end

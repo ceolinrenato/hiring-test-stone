@@ -3,7 +3,7 @@ defmodule HiringTestStoneWeb.Router do
 
   alias HiringTestStone.BankAccount
 
-  pipeline :api do
+  pipeline :protected_api do
     plug :accepts, ["json"]
 
     plug BasicAuth,
@@ -11,9 +11,18 @@ defmodule HiringTestStoneWeb.Router do
       realm: "Se fudeu"
   end
 
+  pipeline :api do
+    plug :accepts, ["json"]
+  end
+
+  scope "/api", HiringTestStoneWeb do
+    pipe_through :protected_api
+    resources "/bank_accounts", BankAccountController, only: [:index, :show]
+    resources "/transactions", TransactionController, only: [:create]
+  end
+
   scope "/api", HiringTestStoneWeb do
     pipe_through :api
-    resources "/bank_accounts", BankAccountController, only: [:index, :show]
-    post "/transactions", TransactionController, :create
+    resources "/bank_accounts", BankAccountController, only: [:create]
   end
 end
