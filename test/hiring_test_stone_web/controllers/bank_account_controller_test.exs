@@ -20,7 +20,7 @@ defmodule HiringTestStoneWeb.BankAccountControllerTest do
       password_confirmation: @fixture_account_password,
       user: %{
         name: "John Doe",
-        email: Faker.Internet.email
+        email: Faker.Internet.email()
       }
     }
 
@@ -171,7 +171,9 @@ defmodule HiringTestStoneWeb.BankAccountControllerTest do
       assert response == expected
     end
 
-    test "Renders account balance if request account is the same as the authenticated one", %{conn: conn} do
+    test "Renders account balance if request account is the same as the authenticated one", %{
+      conn: conn
+    } do
       account = account_fixture()
 
       response =
