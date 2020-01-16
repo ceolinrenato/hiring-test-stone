@@ -8,11 +8,14 @@ defmodule HiringTestStoneWeb.TransactionController do
   @transaction_transfer "transfer"
 
   def create(conn, %{"transaction_type" => @transaction_withdraw} = params) do
-    withdraw_params = params |> Enum.into(%{"source_account" => conn.assigns[:authenticated_account].number})
+    withdraw_params =
+      params |> Enum.into(%{"source_account" => conn.assigns[:authenticated_account].number})
+
     case Transaction.withdraw_changeset(withdraw_params) do
       %{valid?: false} = changeset ->
         conn
         |> render_unprocessable(changeset)
+
       _ = changeset ->
         conn
         |> perform_withdraw(changeset)
@@ -20,11 +23,14 @@ defmodule HiringTestStoneWeb.TransactionController do
   end
 
   def create(conn, %{"transaction_type" => @transaction_transfer} = params) do
-    transfer_params = params |> Enum.into(%{"source_account" => conn.assigns[:authenticated_account].number})
+    transfer_params =
+      params |> Enum.into(%{"source_account" => conn.assigns[:authenticated_account].number})
+
     case Transaction.transfer_changeset(transfer_params) do
       %{valid?: false} = changeset ->
         conn
         |> render_unprocessable(changeset)
+
       _ = changeset ->
         conn
         |> perform_transfer(changeset)
@@ -38,17 +44,20 @@ defmodule HiringTestStoneWeb.TransactionController do
 
   defp render_unprocessable(conn, changeset) do
     conn
-      |> put_status(:unprocessable_entity)
-      |> put_view(ErrorView)
-      |> render("422.json", %{changeset: changeset})
+    |> put_status(:unprocessable_entity)
+    |> put_view(ErrorView)
+    |> render("422.json", %{changeset: changeset})
   end
 
-  defp perform_withdraw(conn, %Ecto.Changeset{changes: %{source_account: source_account_number, amount: amount}}) do
+  defp perform_withdraw(conn, %Ecto.Changeset{
+         changes: %{source_account: source_account_number, amount: amount}
+       }) do
     case Transaction.withdraw_money(source_account_number, amount) do
       {:ok, %{register_withdraw_transaction_step: transaction}} ->
         conn
         |> put_status(:created)
         |> render("create.json", transaction: transaction, type: @transaction_withdraw)
+
       {:error, transaction_step, error, _} ->
         conn
         |> put_status(:bad_request)
@@ -57,20 +66,21 @@ defmodule HiringTestStoneWeb.TransactionController do
   end
 
   defp perform_transfer(
-    conn,
-    %Ecto.Changeset{
-      changes: %{
-        source_account: source_account_number,
-        destination_account: destination_account_number,
-        amount: amount
-      }
-    }
-  ) do
+         conn,
+         %Ecto.Changeset{
+           changes: %{
+             source_account: source_account_number,
+             destination_account: destination_account_number,
+             amount: amount
+           }
+         }
+       ) do
     case Transaction.transfer_money(source_account_number, destination_account_number, amount) do
       {:ok, %{register_transfer_transaction_step: transaction}} ->
         conn
         |> put_status(:created)
         |> render("create.json", transaction: transaction, type: @transaction_transfer)
+
       {:error, transaction_step, error, _} ->
         conn
         |> put_status(:bad_request)

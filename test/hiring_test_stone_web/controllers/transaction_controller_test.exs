@@ -8,7 +8,7 @@ defmodule HiringTestStoneWeb.TransactionControllerTest do
   def user_fixture(attrs \\ %{}) do
     {:ok, user} =
       attrs
-      |> Enum.into(%{name: "some name", email: Faker.Internet.email})
+      |> Enum.into(%{name: "some name", email: Faker.Internet.email()})
       |> BankAccount.create_user()
 
     user
@@ -16,6 +16,7 @@ defmodule HiringTestStoneWeb.TransactionControllerTest do
 
   def account_fixture(attrs \\ %{}) do
     user = user_fixture()
+
     {:ok, account} =
       attrs
       |> Enum.into(%{password: @test_password, balance: 1_000})
@@ -29,9 +30,13 @@ defmodule HiringTestStoneWeb.TransactionControllerTest do
     test "Responds with created and performed transfer when data is valid", %{conn: conn} do
       source_account = account_fixture()
       destination_account = account_fixture()
+
       response =
         conn
-        |> put_req_header("authorization", "Basic " <> Base.url_encode64("#{source_account.number}:#{@test_password}"))
+        |> put_req_header(
+          "authorization",
+          "Basic " <> Base.url_encode64("#{source_account.number}:#{@test_password}")
+        )
         |> post(
           Routes.transaction_path(
             conn,
@@ -47,7 +52,7 @@ defmodule HiringTestStoneWeb.TransactionControllerTest do
 
       expected = %{
         "transaction_type" => "transfer",
-        "amount" =>  1_000.0,
+        "amount" => 1_000.0,
         "source_account" => source_account.number,
         "destination_account" => destination_account.number,
         "remaining_balance" => 0.0
@@ -59,9 +64,13 @@ defmodule HiringTestStoneWeb.TransactionControllerTest do
     test "Responds with an error when source account balance is unsufficient", %{conn: conn} do
       source_account = account_fixture(%{balance: 500})
       destination_account = account_fixture()
+
       response =
         conn
-        |> put_req_header("authorization", "Basic " <> Base.url_encode64("#{source_account.number}:#{@test_password}"))
+        |> put_req_header(
+          "authorization",
+          "Basic " <> Base.url_encode64("#{source_account.number}:#{@test_password}")
+        )
         |> post(
           Routes.transaction_path(
             conn,
@@ -87,16 +96,20 @@ defmodule HiringTestStoneWeb.TransactionControllerTest do
 
     test "Responds with an error when destination account is not found", %{conn: conn} do
       source_account = account_fixture()
+
       response =
         conn
-        |> put_req_header("authorization", "Basic " <> Base.url_encode64("#{source_account.number}:#{@test_password}"))
+        |> put_req_header(
+          "authorization",
+          "Basic " <> Base.url_encode64("#{source_account.number}:#{@test_password}")
+        )
         |> post(
           Routes.transaction_path(
             conn,
             :create,
             %{
               transaction_type: "transfer",
-              destination_account: Ecto.UUID.generate,
+              destination_account: Ecto.UUID.generate(),
               amount: 1_000
             }
           )
@@ -115,9 +128,13 @@ defmodule HiringTestStoneWeb.TransactionControllerTest do
 
     test "Responds with an error when trying to transfer to the same account", %{conn: conn} do
       source_account = account_fixture()
+
       response =
         conn
-        |> put_req_header("authorization", "Basic " <> Base.url_encode64("#{source_account.number}:#{@test_password}"))
+        |> put_req_header(
+          "authorization",
+          "Basic " <> Base.url_encode64("#{source_account.number}:#{@test_password}")
+        )
         |> post(
           Routes.transaction_path(
             conn,
@@ -143,9 +160,13 @@ defmodule HiringTestStoneWeb.TransactionControllerTest do
 
     test "Responds with an error if any attribute is invalid", %{conn: conn} do
       source_account = account_fixture()
+
       response =
         conn
-        |> put_req_header("authorization", "Basic " <> Base.url_encode64("#{source_account.number}:#{@test_password}"))
+        |> put_req_header(
+          "authorization",
+          "Basic " <> Base.url_encode64("#{source_account.number}:#{@test_password}")
+        )
         |> post(
           Routes.transaction_path(
             conn,
@@ -172,9 +193,13 @@ defmodule HiringTestStoneWeb.TransactionControllerTest do
   describe "create/2 -> withdraw" do
     test "Responds with created and performed withdraw when data is valid", %{conn: conn} do
       source_account = account_fixture()
+
       response =
         conn
-        |> put_req_header("authorization", "Basic " <> Base.url_encode64("#{source_account.number}:#{@test_password}"))
+        |> put_req_header(
+          "authorization",
+          "Basic " <> Base.url_encode64("#{source_account.number}:#{@test_password}")
+        )
         |> post(
           Routes.transaction_path(
             conn,
@@ -199,9 +224,13 @@ defmodule HiringTestStoneWeb.TransactionControllerTest do
 
     test "Responds with an error when source account balance is unsufficient", %{conn: conn} do
       source_account = account_fixture(%{balance: 500})
+
       response =
         conn
-        |> put_req_header("authorization", "Basic " <> Base.url_encode64("#{source_account.number}:#{@test_password}"))
+        |> put_req_header(
+          "authorization",
+          "Basic " <> Base.url_encode64("#{source_account.number}:#{@test_password}")
+        )
         |> post(
           Routes.transaction_path(
             conn,
@@ -226,9 +255,13 @@ defmodule HiringTestStoneWeb.TransactionControllerTest do
 
     test "Responds with an error if any attribute is invalid", %{conn: conn} do
       source_account = account_fixture()
+
       response =
         conn
-        |> put_req_header("authorization", "Basic " <> Base.url_encode64("#{source_account.number}:#{@test_password}"))
+        |> put_req_header(
+          "authorization",
+          "Basic " <> Base.url_encode64("#{source_account.number}:#{@test_password}")
+        )
         |> post(
           Routes.transaction_path(
             conn,
@@ -253,9 +286,13 @@ defmodule HiringTestStoneWeb.TransactionControllerTest do
 
   test "create/2 responds with an error when invalid transaction type", %{conn: conn} do
     source_account = account_fixture()
+
     response =
       conn
-      |> put_req_header("authorization", "Basic " <> Base.url_encode64("#{source_account.number}:#{@test_password}"))
+      |> put_req_header(
+        "authorization",
+        "Basic " <> Base.url_encode64("#{source_account.number}:#{@test_password}")
+      )
       |> post(
         Routes.transaction_path(
           conn,
@@ -286,5 +323,4 @@ defmodule HiringTestStoneWeb.TransactionControllerTest do
 
     assert response == "401 Unauthorized"
   end
-
 end

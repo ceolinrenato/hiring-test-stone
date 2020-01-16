@@ -138,10 +138,10 @@ defmodule HiringTestStone.BankAccount do
 
   def get_account_by_number(<<_::288>> = account_number) do
     Account
-      |> where([account], account.number == ^account_number)
-      |> preload(:user)
-      |> lock("FOR UPDATE")
-      |> Repo.one()
+    |> where([account], account.number == ^account_number)
+    |> preload(:user)
+    |> lock("FOR UPDATE")
+    |> Repo.one()
   end
 
   def get_account_by_number(_), do: {:error, :account_not_found}

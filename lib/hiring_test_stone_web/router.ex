@@ -5,7 +5,10 @@ defmodule HiringTestStoneWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
-    plug BasicAuth, callback: &BankAccount.find_account_by_number_and_password/3, realm: "Se fudeu"
+
+    plug BasicAuth,
+      callback: &BankAccount.find_account_by_number_and_password/3,
+      realm: "Se fudeu"
   end
 
   scope "/api", HiringTestStoneWeb do

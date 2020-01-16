@@ -15,6 +15,7 @@ defmodule HiringTestStone.BankAccountTest do
         attrs
         |> Enum.into(@valid_attrs)
         |> BankAccount.create_user()
+
       user
     end
 
@@ -70,6 +71,7 @@ defmodule HiringTestStone.BankAccountTest do
 
     def account_fixture(attrs \\ %{}) do
       user = user_fixture()
+
       {:ok, account} =
         attrs
         |> Enum.into(@valid_attrs)
@@ -81,7 +83,10 @@ defmodule HiringTestStone.BankAccountTest do
 
     test "list_accounts/0 returns all accounts" do
       account = account_fixture()
-      assert BankAccount.list_accounts() == [Account |> where([acc], acc.id == ^account.id) |> preload(:user) |> Repo.one()]
+
+      assert BankAccount.list_accounts() == [
+               Account |> where([acc], acc.id == ^account.id) |> preload(:user) |> Repo.one()
+             ]
     end
 
     test "get_account!/1 returns the account with given id" do
@@ -91,10 +96,12 @@ defmodule HiringTestStone.BankAccountTest do
 
     test "create_account/1 with valid data creates a account" do
       user = user_fixture()
+
       assert {:ok, %Account{} = account} =
-        @valid_attrs
-        |> Enum.into(%{user_id: user.id})
-        |> BankAccount.create_account()
+               @valid_attrs
+               |> Enum.into(%{user_id: user.id})
+               |> BankAccount.create_account()
+
       assert account.balance == 1000
     end
 
@@ -135,6 +142,7 @@ defmodule HiringTestStone.BankAccountTest do
           email: "johndoe@example.com"
         }
       }
+
       assert {:ok, %Account{} = account} = BankAccount.register_bank_account(attrs)
       assert account.user.id != nil
       assert account.id != nil
@@ -146,11 +154,12 @@ defmodule HiringTestStone.BankAccountTest do
         password: "123456",
         password_confirmation: "123456",
         user: %{
-          name: "John Doe",
+          name: "John Doe"
         }
       }
+
       assert {:error, %Ecto.Changeset{changes: %{user: %{errors: [email: _]}}}} =
-        BankAccount.register_bank_account(attrs)
+               BankAccount.register_bank_account(attrs)
     end
   end
 end

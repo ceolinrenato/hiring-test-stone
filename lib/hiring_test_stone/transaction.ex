@@ -125,8 +125,18 @@ defmodule HiringTestStone.Transaction do
 
   def transfer_changeset(%{} = params) do
     {%{}, @transaction_schema}
-    |> Ecto.Changeset.cast(params, [:transaction_type, :source_account, :destination_account, :amount])
-    |> Ecto.Changeset.validate_required([:transaction_type, :source_account, :destination_account, :amount])
+    |> Ecto.Changeset.cast(params, [
+      :transaction_type,
+      :source_account,
+      :destination_account,
+      :amount
+    ])
+    |> Ecto.Changeset.validate_required([
+      :transaction_type,
+      :source_account,
+      :destination_account,
+      :amount
+    ])
     |> Ecto.Changeset.validate_inclusion(:transaction_type, ["transfer"])
     |> Ecto.Changeset.validate_number(:amount, greater_than: 0)
   end
@@ -134,7 +144,10 @@ defmodule HiringTestStone.Transaction do
   def transfer_money(source_account_number, destination_account_number, transfer_amount) do
     Multi.new()
     |> Multi.run(:retrieve_source_account_step, retrieve_account_by_number(source_account_number))
-    |> Multi.run(:retrieve_destination_account_step, retrieve_account_by_number(destination_account_number))
+    |> Multi.run(
+      :retrieve_destination_account_step,
+      retrieve_account_by_number(destination_account_number)
+    )
     |> Multi.run(:verify_accounts_step, &verify_accounts/2)
     |> Multi.run(:verify_balance_step, verify_balance(transfer_amount))
     |> Multi.run(:subtract_from_source_account_step, &subtract_from_source_account/2)
@@ -169,45 +182,53 @@ defmodule HiringTestStone.Transaction do
     end
   end
 
-  defp verify_accounts(_repo, %{retrieve_source_account_step: source_account, retrieve_destination_account_step: destination_account}) do
+  defp verify_accounts(_repo, %{
+         retrieve_source_account_step: source_account,
+         retrieve_destination_account_step: destination_account
+       }) do
     if source_account.id == destination_account.id,
       do: {:error, :source_equal_to_destination},
       else: {:ok, {source_account, destination_account}}
   end
 
-  defp subtract_from_source_account(repo, %{verify_balance_step: {source_account, verified_amount}}) do
+  defp subtract_from_source_account(repo, %{
+         verify_balance_step: {source_account, verified_amount}
+       }) do
     source_account
     |> Account.changeset(%{balance: source_account.balance - verified_amount})
     |> repo.update()
   end
 
-  defp add_to_destination_account(repo, %{verify_balance_step: {_, verified_amount}, retrieve_destination_account_step: destination_account}) do
+  defp add_to_destination_account(repo, %{
+         verify_balance_step: {_, verified_amount},
+         retrieve_destination_account_step: destination_account
+       }) do
     destination_account
     |> Account.changeset(%{balance: destination_account.balance + verified_amount})
     |> repo.update()
   end
 
-  defp register_transfer_transaction(repo, %{verify_balance_step: {source_account, verified_amount}, retrieve_destination_account_step: destination_account}) do
+  defp register_transfer_transaction(repo, %{
+         verify_balance_step: {source_account, verified_amount},
+         retrieve_destination_account_step: destination_account
+       }) do
     %Transfer{}
-    |> Transfer.changeset(
-      %{
-        source_account_id: source_account.id,
-        destination_account_id: destination_account.id,
-        amount: verified_amount
-      }
-    )
+    |> Transfer.changeset(%{
+      source_account_id: source_account.id,
+      destination_account_id: destination_account.id,
+      amount: verified_amount
+    })
     |> repo.insert()
   end
 
-  defp register_withdraw_transaction(repo, %{verify_balance_step: {source_account, verified_amount}}) do
+  defp register_withdraw_transaction(repo, %{
+         verify_balance_step: {source_account, verified_amount}
+       }) do
     %Withdraw{}
-    |> Withdraw.changeset(
-      %{
-        source_account_id: source_account.id,
-        amount: verified_amount
-      }
-    )
+    |> Withdraw.changeset(%{
+      source_account_id: source_account.id,
+      amount: verified_amount
+    })
     |> repo.insert()
   end
-
 end
