@@ -6,7 +6,7 @@ defmodule HiringTestStone.BankAccountTest do
   describe "users" do
     alias HiringTestStone.BankAccount.User
 
-    @valid_attrs %{name: "some name"}
+    @valid_attrs %{name: "some name", email: "some@email.com"}
     @update_attrs %{name: "some updated name"}
     @invalid_attrs %{name: nil}
 

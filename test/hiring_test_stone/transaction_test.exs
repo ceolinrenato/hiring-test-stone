@@ -14,7 +14,7 @@ defmodule HiringTestStone.TransactionTest do
     def user_fixture(attrs \\ %{}) do
       {:ok, user} =
         attrs
-        |> Enum.into(%{name: "some name"})
+        |> Enum.into(%{name: "some name", email: "some@email.com"})
         |> BankAccount.create_user()
 
       user
