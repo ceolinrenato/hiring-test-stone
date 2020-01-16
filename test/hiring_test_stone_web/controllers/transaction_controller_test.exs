@@ -51,11 +51,13 @@ defmodule HiringTestStoneWeb.TransactionControllerTest do
         |> json_response(201)
 
       expected = %{
-        "transaction_type" => "transfer",
-        "amount" => 1_000.0,
-        "source_account" => source_account.number,
-        "destination_account" => destination_account.number,
-        "remaining_balance" => 0.0
+        "data" => %{
+          "transaction_type" => "transfer",
+          "amount" => 1_000.0,
+          "source_account" => source_account.number,
+          "destination_account" => destination_account.number,
+          "remaining_balance" => 0.0
+        }
       }
 
       assert response == expected
@@ -213,10 +215,12 @@ defmodule HiringTestStoneWeb.TransactionControllerTest do
         |> json_response(201)
 
       expected = %{
-        "amount" => 1_000.0,
-        "remaining_balance" => 0.0,
-        "source_account" => source_account.number,
-        "transaction_type" => "withdraw"
+        "data" => %{
+          "amount" => 1_000.0,
+          "remaining_balance" => 0.0,
+          "source_account" => source_account.number,
+          "transaction_type" => "withdraw"
+        }
       }
 
       assert response == expected

@@ -14,10 +14,12 @@ defmodule HiringTestStoneWeb.TransactionView do
       BankAccount.get_account!(source_account_id)
 
     %{
-      transaction_type: @transaction_withdraw,
-      amount: amount,
-      source_account: source_account_number,
-      remaining_balance: balance
+      data: %{
+        transaction_type: @transaction_withdraw,
+        amount: amount,
+        source_account: source_account_number,
+        remaining_balance: balance
+      }
     }
   end
 
@@ -38,11 +40,13 @@ defmodule HiringTestStoneWeb.TransactionView do
     %{number: destination_account_number} = BankAccount.get_account!(destination_account_id)
 
     %{
-      transaction_type: @transaction_transfer,
-      amount: amount,
-      source_account: source_account_number,
-      destination_account: destination_account_number,
-      remaining_balance: balance
+      data: %{
+        transaction_type: @transaction_transfer,
+        amount: amount,
+        source_account: source_account_number,
+        destination_account: destination_account_number,
+        remaining_balance: balance
+      }
     }
   end
 

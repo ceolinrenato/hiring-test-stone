@@ -13,7 +13,8 @@ defmodule HiringTestStoneWeb.BankAccountView do
     %{
       number: account.number,
       user: %{
-        name: account.user.name
+        name: account.user.name,
+        email: account.user.email
       }
     }
   end
