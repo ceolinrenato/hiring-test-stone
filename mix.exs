@@ -20,7 +20,7 @@ defmodule HiringTestStone.MixProject do
   def application do
     [
       mod: {HiringTestStone.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:logger, :runtime_tools, :timex]
     ]
   end
 
@@ -44,7 +44,8 @@ defmodule HiringTestStone.MixProject do
       {:credo, "~> 1.1.0", only: [:dev, :test], runtime: false},
       {:basic_auth, "~> 2.2.2"},
       {:bcrypt_elixir, "~> 2.0"},
-      {:faker, "~> 0.13", only: :test}
+      {:faker, "~> 0.13", only: :test},
+      {:timex, "~> 3.0"}
     ]
   end
 

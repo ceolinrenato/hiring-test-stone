@@ -57,6 +57,13 @@ defmodule HiringTestStoneWeb do
     end
   end
 
+  def model do
+    quote do
+      use Ecto.Model
+      use Timex.Ecto.Timestamps
+    end
+  end
+
   @doc """
   When used, dispatch to the appropriate controller/view/etc.
   """
