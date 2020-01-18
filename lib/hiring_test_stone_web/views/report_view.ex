@@ -3,9 +3,11 @@ defmodule HiringTestStoneWeb.ReportView do
 
   def render("show.json", %{withdrew: amount_withdrew, transfered: amount_transfered}) do
     %{
-      withdrew: amount_withdrew || 0,
-      transfered: amount_transfered || 0,
-      total: (amount_transfered || 0) + (amount_withdrew || 0)
+      data: %{
+        withdrew: amount_withdrew || 0,
+        transfered: amount_transfered || 0,
+        total: (amount_transfered || 0) + (amount_withdrew || 0)
+      }
     }
   end
 end

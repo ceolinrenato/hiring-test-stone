@@ -2,6 +2,7 @@ defmodule HiringTestStoneWeb.ReportController do
   use HiringTestStoneWeb, :controller
 
   alias HiringTestStone.Transaction
+  alias HiringTestStoneWeb.ErrorView
 
   def show(conn, params) do
     case Transaction.report_changeset(params) do
