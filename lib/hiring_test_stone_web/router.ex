@@ -36,5 +36,8 @@ defmodule HiringTestStoneWeb.Router do
   scope "/api", HiringTestStoneWeb do
     pipe_through :admin_api
     resources "/bank_accounts", BankAccountController, only: [:index]
+    get "/reports/:report_year", ReportController, :show
+    get "/reports/:report_year/:report_month", ReportController, :show
+    get "/reports/:report_year/:report_month/:report_day", ReportController, :show
   end
 end

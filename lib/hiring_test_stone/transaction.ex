@@ -165,7 +165,7 @@ defmodule HiringTestStone.Transaction do
     )
   end
 
-  def get_total_withdraw_amount(%{report_day: day, report_month: month, report_year: year}) do
+  def get_total_withdrew_amount(%{report_day: day, report_month: month, report_year: year}) do
     report_dt = Timex.to_datetime({year, month, day})
     from_dt = report_dt |> Timex.beginning_of_day()
     to_dt = report_dt |> Timex.end_of_day()
@@ -176,7 +176,7 @@ defmodule HiringTestStone.Transaction do
     |> Repo.one()
   end
 
-  def get_total_withdraw_amount(%{report_month: month, report_year: year}) do
+  def get_total_withdrew_amount(%{report_month: month, report_year: year}) do
     report_dt = Timex.to_datetime({year, month, 1})
     from_dt = report_dt |> Timex.beginning_of_month()
     to_dt = report_dt |> Timex.end_of_month()
@@ -187,7 +187,7 @@ defmodule HiringTestStone.Transaction do
     |> Repo.one()
   end
 
-  def get_total_withdraw_amount(%{report_year: year}) do
+  def get_total_withdrew_amount(%{report_year: year}) do
     report_dt = Timex.to_datetime({year, 1, 1})
     from_dt = report_dt |> Timex.beginning_of_year()
     to_dt = report_dt |> Timex.end_of_year()
@@ -198,7 +198,7 @@ defmodule HiringTestStone.Transaction do
     |> Repo.one()
   end
 
-  def get_total_transfer_amount(%{report_day: day, report_month: month, report_year: year}) do
+  def get_total_transfered_amount(%{report_day: day, report_month: month, report_year: year}) do
     report_dt = Timex.to_datetime({year, month, day})
     from_dt = report_dt |> Timex.beginning_of_day()
     to_dt = report_dt |> Timex.end_of_day()
@@ -209,7 +209,7 @@ defmodule HiringTestStone.Transaction do
     |> Repo.one()
   end
 
-  def get_total_transfer_amount(%{report_month: month, report_year: year}) do
+  def get_total_transfered_amount(%{report_month: month, report_year: year}) do
     report_dt = Timex.to_datetime({year, month, 1})
     from_dt = report_dt |> Timex.beginning_of_month()
     to_dt = report_dt |> Timex.end_of_month()
@@ -220,7 +220,7 @@ defmodule HiringTestStone.Transaction do
     |> Repo.one()
   end
 
-  def get_total_transfer_amount(%{report_year: year}) do
+  def get_total_transfered_amount(%{report_year: year}) do
     report_dt = Timex.to_datetime({year, 1, 1})
     from_dt = report_dt |> Timex.beginning_of_year()
     to_dt = report_dt |> Timex.end_of_year()

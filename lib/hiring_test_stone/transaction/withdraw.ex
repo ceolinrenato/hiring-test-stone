@@ -1,4 +1,5 @@
 defmodule HiringTestStone.Transaction.Withdraw do
+  @moduledoc false
   use Ecto.Schema
   import Ecto.Changeset
 

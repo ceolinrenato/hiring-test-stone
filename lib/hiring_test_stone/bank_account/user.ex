@@ -1,4 +1,5 @@
 defmodule HiringTestStone.BankAccount.User do
+  @moduledoc false
   alias HiringTestStone.BankAccount.Account
   use Ecto.Schema
   import Ecto.Changeset

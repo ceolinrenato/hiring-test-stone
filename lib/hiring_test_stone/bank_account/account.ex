@@ -1,4 +1,5 @@
 defmodule HiringTestStone.BankAccount.Account do
+  @moduledoc false
   alias HiringTestStone.BankAccount.User
   alias HiringTestStone.Transaction.Transfer
   use Ecto.Schema
