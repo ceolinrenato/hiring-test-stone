@@ -114,7 +114,7 @@ defmodule HiringStoneWeb.ReportControllerTest do
       assert response == expected
     end
 
-    test "Responds with an error when trying to get a report for an invalid period", %{conn: conn} do
+    test "Responds with an error when trying to get a report for an invalid date", %{conn: conn} do
       response =
         conn
         |> using_basic_auth(@username, @password)
@@ -131,7 +131,7 @@ defmodule HiringStoneWeb.ReportControllerTest do
 
       expected = %{
         "errors" => %{
-          "report_month" => ["must be less than or equal to 12"]
+          "report_date" => ["invalid_date"]
         }
       }
 

@@ -20,7 +20,8 @@ defmodule HiringTestStone.Transaction do
   @report_schema %{
     report_day: :integer,
     report_month: :integer,
-    report_year: :integer
+    report_year: :integer,
+    report_date: :date
   }
 
   @doc """
@@ -154,15 +155,22 @@ defmodule HiringTestStone.Transaction do
       :report_month,
       :report_year
     ])
-    |> Ecto.Changeset.validate_number(:report_year, greater_than: 0)
-    |> Ecto.Changeset.validate_number(:report_month,
-      greater_than_or_equal_to: 1,
-      less_than_or_equal_to: 12
-    )
-    |> Ecto.Changeset.validate_number(:report_day,
-      greater_than_or_equal_to: 1,
-      less_than_or_equal_to: 31
-    )
+    |> Ecto.Changeset.validate_required(:report_year)
+    |> put_report_date()
+  end
+
+  defp put_report_date(%Ecto.Changeset{changes: %{report_year: _} = changes} = changeset) do
+    case Date.from_erl(
+           {changes.report_year, changes[:report_month] || 1, changes[:report_day] || 1}
+         ) do
+      {:ok, date} ->
+        changeset
+        |> Ecto.Changeset.change(%{report_date: date})
+
+      {:error, _} ->
+        changeset
+        |> Ecto.Changeset.add_error(:report_date, "invalid_date")
+    end
   end
 
   def get_total_withdrew_amount(%{report_day: day, report_month: month, report_year: year}) do
