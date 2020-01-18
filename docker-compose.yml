@@ -5,9 +5,10 @@ services:
     image: postgres
     restart: always
     environment:
-      POSTGRES_PASSWORD: ""
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
       - 5432:5432
+
   pgadmin:
     image: dpage/pgadmin4
     environment:
@@ -15,3 +16,20 @@ services:
       PGADMIN_DEFAULT_PASSWORD: "admin"
     ports:
       - 8080:80
+    depends_on:
+      - postgres
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        DATABASE_URL: ${DATABASE_URL}
+        SECRET_KEY_BASE: ${SECRET_KEY_BASE}
+    depends_on:
+      - postgres
+    environment:
+      BASIC_AUTH_USERNAME: ${BASIC_AUTH_USERNAME}
+      BASIC_AUTH_PASSWORD: ${BASIC_AUTH_PASSWORD}
+    ports:
+      - 4000:4000

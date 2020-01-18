@@ -29,3 +29,5 @@ hiring_test_stone-*.tar
 
 # vscode specific
 /.elixir_ls
+
+.env
