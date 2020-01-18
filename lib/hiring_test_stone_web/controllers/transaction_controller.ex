@@ -1,6 +1,7 @@
 defmodule HiringTestStoneWeb.TransactionController do
   use HiringTestStoneWeb, :controller
 
+  alias HiringTestStone.EmailDispatcher
   alias HiringTestStone.Transaction
   alias HiringTestStoneWeb.ErrorView
 
@@ -53,7 +54,13 @@ defmodule HiringTestStoneWeb.TransactionController do
          changes: %{source_account: source_account_number, amount: amount}
        }) do
     case Transaction.withdraw_money(source_account_number, amount) do
-      {:ok, %{register_withdraw_transaction_step: transaction}} ->
+      {:ok,
+       %{
+         register_withdraw_transaction_step: transaction,
+         retrieve_source_account_step: source_account
+       }} ->
+        EmailDispatcher.send_withdraw_email(source_account, amount)
+
         conn
         |> put_status(:created)
         |> render("create.json", transaction: transaction, type: @transaction_withdraw)
@@ -76,10 +83,24 @@ defmodule HiringTestStoneWeb.TransactionController do
          }
        ) do
     case Transaction.transfer_money(source_account_number, destination_account_number, amount) do
-      {:ok, %{register_transfer_transaction_step: transaction}} ->
+      {:ok,
+       %{
+         register_transfer_transaction_step: transaction,
+         retrieve_source_account_step: source_account,
+         retrieve_destination_account_step: destination_account
+       }} ->
+        EmailDispatcher.send_transfer_emails(
+          source_account,
+          destination_account,
+          transaction.amount
+        )
+
         conn
         |> put_status(:created)
-        |> render("create.json", transaction: transaction, type: @transaction_transfer)
+        |> render("create.json",
+          transaction: transaction,
+          type: @transaction_transfer
+        )
 
       {:error, transaction_step, error, _} ->
         conn
