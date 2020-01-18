@@ -3,6 +3,8 @@ defmodule HiringTestStone.BankAccount.User do
   use Ecto.Schema
   import Ecto.Changeset
 
+  @timestamps_opts [type: :utc_datetime]
+
   schema "users" do
     field :name, :string
     field :email, :string

@@ -4,6 +4,8 @@ defmodule HiringTestStone.BankAccount.Account do
   use Ecto.Schema
   import Ecto.Changeset
 
+  @timestamps_opts [type: :utc_datetime]
+
   schema "accounts" do
     field :number, Ecto.UUID, read_after_writes: true
     field :password_hash, :string

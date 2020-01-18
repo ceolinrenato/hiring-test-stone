@@ -3,6 +3,8 @@ defmodule HiringTestStone.Transaction.Transfer do
   use Ecto.Schema
   import Ecto.Changeset
 
+  @timestamps_opts [type: :utc_datetime]
+
   schema "transfers" do
     field :amount, :float
     belongs_to :source_account, Account, foreign_key: :source_account_id

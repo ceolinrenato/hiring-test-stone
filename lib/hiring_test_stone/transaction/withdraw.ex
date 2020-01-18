@@ -4,6 +4,8 @@ defmodule HiringTestStone.Transaction.Withdraw do
 
   alias HiringTestStone.BankAccount.Account
 
+  @timestamps_opts [type: :utc_datetime]
+
   schema "withdraws" do
     field :amount, :float
     belongs_to :source_account, Account, foreign_key: :source_account_id
