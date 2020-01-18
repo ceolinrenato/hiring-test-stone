@@ -36,3 +36,11 @@ config :hiring_test_stone, HiringTestStoneWeb.Endpoint, server: true
 #
 # Then you can assemble a release by calling `mix release`.
 # See `mix help release` for more information.
+
+# Admin Area config
+config :basic_auth,
+  admin_auth: [
+    username: System.get_env("BASIC_AUTH_USERNAME"),
+    password: System.get_env("BASIC_AUTH_PASSWORD"),
+    realm: "Admin Area"
+  ]
