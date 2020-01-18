@@ -8,7 +8,7 @@ defmodule HiringTestStone.BankAccount.Account do
   @timestamps_opts [type: :utc_datetime]
 
   schema "accounts" do
-    field :number, Ecto.UUID, read_after_writes: true
+    field :number, Ecto.UUID, autogenerate: true
     field :password_hash, :string
     field :balance, :float
     belongs_to :user, User
