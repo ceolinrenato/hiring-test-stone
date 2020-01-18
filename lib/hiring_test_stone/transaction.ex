@@ -17,6 +17,12 @@ defmodule HiringTestStone.Transaction do
     amount: :float
   }
 
+  @report_schema %{
+    report_day: :integer,
+    report_month: :integer,
+    report_year: :integer
+  }
+
   @doc """
   Returns the list of transfer.
 
@@ -139,6 +145,90 @@ defmodule HiringTestStone.Transaction do
     ])
     |> Ecto.Changeset.validate_inclusion(:transaction_type, ["transfer"])
     |> Ecto.Changeset.validate_number(:amount, greater_than: 0)
+  end
+
+  def report_changeset(%{} = params) do
+    {%{}, @report_schema}
+    |> Ecto.Changeset.cast(params, [
+      :report_day,
+      :report_month,
+      :report_year
+    ])
+    |> Ecto.Changeset.validate_number(:report_year, greater_than: 0)
+    |> Ecto.Changeset.validate_number(:report_month,
+      greater_than_or_equal_to: 1,
+      less_than_or_equal_to: 12
+    )
+    |> Ecto.Changeset.validate_number(:report_day,
+      greater_than_or_equal_to: 1,
+      less_than_or_equal_to: 31
+    )
+  end
+
+  def get_total_withdraw_amount(%{report_day: day, report_month: month, report_year: year}) do
+    report_dt = Timex.to_datetime({year, month, day})
+    from_dt = report_dt |> Timex.beginning_of_day()
+    to_dt = report_dt |> Timex.end_of_day()
+
+    Withdraw
+    |> select([withdraw], sum(withdraw.amount))
+    |> where([withdraw], withdraw.inserted_at >= ^from_dt and withdraw.inserted_at <= ^to_dt)
+    |> Repo.one()
+  end
+
+  def get_total_withdraw_amount(%{report_month: month, report_year: year}) do
+    report_dt = Timex.to_datetime({year, month, 1})
+    from_dt = report_dt |> Timex.beginning_of_month()
+    to_dt = report_dt |> Timex.end_of_month()
+
+    Withdraw
+    |> select([withdraw], sum(withdraw.amount))
+    |> where([withdraw], withdraw.inserted_at >= ^from_dt and withdraw.inserted_at <= ^to_dt)
+    |> Repo.one()
+  end
+
+  def get_total_withdraw_amount(%{report_year: year}) do
+    report_dt = Timex.to_datetime({year, 1, 1})
+    from_dt = report_dt |> Timex.beginning_of_year()
+    to_dt = report_dt |> Timex.end_of_year()
+
+    Withdraw
+    |> select([withdraw], sum(withdraw.amount))
+    |> where([withdraw], withdraw.inserted_at >= ^from_dt and withdraw.inserted_at <= ^to_dt)
+    |> Repo.one()
+  end
+
+  def get_total_transfer_amount(%{report_day: day, report_month: month, report_year: year}) do
+    report_dt = Timex.to_datetime({year, month, day})
+    from_dt = report_dt |> Timex.beginning_of_day()
+    to_dt = report_dt |> Timex.end_of_day()
+
+    Transfer
+    |> select([transfer], sum(transfer.amount))
+    |> where([transfer], transfer.inserted_at >= ^from_dt and transfer.inserted_at <= ^to_dt)
+    |> Repo.one()
+  end
+
+  def get_total_transfer_amount(%{report_month: month, report_year: year}) do
+    report_dt = Timex.to_datetime({year, month, 1})
+    from_dt = report_dt |> Timex.beginning_of_month()
+    to_dt = report_dt |> Timex.end_of_month()
+
+    Transfer
+    |> select([transfer], sum(transfer.amount))
+    |> where([transfer], transfer.inserted_at >= ^from_dt and transfer.inserted_at <= ^to_dt)
+    |> Repo.one()
+  end
+
+  def get_total_transfer_amount(%{report_year: year}) do
+    report_dt = Timex.to_datetime({year, 1, 1})
+    from_dt = report_dt |> Timex.beginning_of_year()
+    to_dt = report_dt |> Timex.end_of_year()
+
+    Transfer
+    |> select([transfer], sum(transfer.amount))
+    |> where([transfer], transfer.inserted_at >= ^from_dt and transfer.inserted_at <= ^to_dt)
+    |> Repo.one()
   end
 
   def transfer_money(source_account_number, destination_account_number, transfer_amount) do
