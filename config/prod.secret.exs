@@ -32,7 +32,7 @@ config :hiring_test_stone, HiringTestStoneWeb.Endpoint,
 # If you are doing OTP releases, you need to instruct Phoenix
 # to start each relevant endpoint:
 #
-#     config :hiring_test_stone, HiringTestStoneWeb.Endpoint, server: true
+config :hiring_test_stone, HiringTestStoneWeb.Endpoint, server: true
 #
 # Then you can assemble a release by calling `mix release`.
 # See `mix help release` for more information.
