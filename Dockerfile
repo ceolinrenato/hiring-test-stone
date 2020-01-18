@@ -3,6 +3,8 @@ FROM elixir:1.9.0-alpine as build
 
 ARG DATABASE_URL
 ARG SECRET_KEY_BASE
+ARG BASIC_AUTH_USERNAME
+ARG BASIC_AUTH_PASSWORD
 
 # install build dependencies
 RUN apk add --update git build-base
@@ -19,6 +21,8 @@ RUN mix local.hex --force && \
 ENV MIX_ENV=prod
 ENV DATABASE_URL=$DATABASE_URL
 ENV SECRET_KEY_BASE=$SECRET_KEY_BASE
+ARG BASIC_AUTH_USERNAME=$BASIC_AUTH_USERNAME
+ARG BASIC_AUTH_PASSWORD=$BASIC_AUTH_PASSWORD
 
 # install mix dependencies
 COPY mix.exs mix.lock ./

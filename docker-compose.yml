@@ -26,10 +26,9 @@ services:
       args:
         DATABASE_URL: ${DATABASE_URL}
         SECRET_KEY_BASE: ${SECRET_KEY_BASE}
+        BASIC_AUTH_USERNAME: ${BASIC_AUTH_USERNAME}
+        BASIC_AUTH_PASSWORD: ${BASIC_AUTH_PASSWORD}
     depends_on:
       - postgres
-    environment:
-      BASIC_AUTH_USERNAME: ${BASIC_AUTH_USERNAME}
-      BASIC_AUTH_PASSWORD: ${BASIC_AUTH_PASSWORD}
     ports:
       - 4000:4000
