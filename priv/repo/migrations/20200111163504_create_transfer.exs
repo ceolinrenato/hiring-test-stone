@@ -12,5 +12,6 @@ defmodule HiringTestStone.Repo.Migrations.CreateTransfer do
 
     create index(:transfers, [:source_account_id])
     create index(:transfers, [:destination_account_id])
+    create index(:transfers, [:inserted_at])
   end
 end
