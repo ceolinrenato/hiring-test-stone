@@ -16,3 +16,13 @@ config :hiring_test_stone, HiringTestStoneWeb.Endpoint,
 
 # Print only warnings and errors during test
 config :logger, level: :warn
+
+config :bcrypt_elixir, :log_rounds, 4
+
+# Admin Area config
+config :basic_auth,
+  admin_auth: [
+    username: "admin",
+    password: "admin",
+    realm: "Admin Area"
+  ]

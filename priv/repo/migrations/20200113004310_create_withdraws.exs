@@ -10,5 +10,6 @@ defmodule HiringTestStone.Repo.Migrations.CreateWithdraws do
     end
 
     create index(:withdraws, [:source_account_id])
+    create index(:withdraws, [:inserted_at])
   end
 end

@@ -6,7 +6,7 @@ defmodule HiringTestStone.BankAccountTest do
   describe "users" do
     alias HiringTestStone.BankAccount.User
 
-    @valid_attrs %{name: "some name"}
+    @valid_attrs %{name: "some name", email: "some@email.com"}
     @update_attrs %{name: "some updated name"}
     @invalid_attrs %{name: nil}
 
@@ -15,6 +15,7 @@ defmodule HiringTestStone.BankAccountTest do
         attrs
         |> Enum.into(@valid_attrs)
         |> BankAccount.create_user()
+
       user
     end
 
@@ -64,12 +65,13 @@ defmodule HiringTestStone.BankAccountTest do
   describe "accounts" do
     alias HiringTestStone.BankAccount.{Account, User}
 
-    @valid_attrs %{password_hash: "some password_hash", balance: 1_000}
-    @update_attrs %{password_hash: "some updated password_hash", balance: 950}
+    @valid_attrs %{password: "123456", password_confirmation: "123456", balance: 1_000}
+    @update_attrs %{balance: 950}
     @invalid_attrs %{password_hash: nil, balance: nil}
 
     def account_fixture(attrs \\ %{}) do
       user = user_fixture()
+
       {:ok, account} =
         attrs
         |> Enum.into(@valid_attrs)
@@ -81,7 +83,10 @@ defmodule HiringTestStone.BankAccountTest do
 
     test "list_accounts/0 returns all accounts" do
       account = account_fixture()
-      assert BankAccount.list_accounts() == [account]
+
+      assert BankAccount.list_accounts() == [
+               Account |> where([acc], acc.id == ^account.id) |> preload(:user) |> Repo.one()
+             ]
     end
 
     test "get_account!/1 returns the account with given id" do
@@ -91,11 +96,13 @@ defmodule HiringTestStone.BankAccountTest do
 
     test "create_account/1 with valid data creates a account" do
       user = user_fixture()
+
       assert {:ok, %Account{} = account} =
-        @valid_attrs
-        |> Enum.into(%{user_id: user.id})
-        |> BankAccount.create_account()
-      assert account.password_hash == "some password_hash"
+               @valid_attrs
+               |> Enum.into(%{user_id: user.id})
+               |> BankAccount.create_account()
+
+      assert account.balance == 1000
     end
 
     test "create_account/1 with invalid data returns error changeset" do
@@ -105,7 +112,7 @@ defmodule HiringTestStone.BankAccountTest do
     test "update_account/2 with valid data updates the account" do
       account = account_fixture()
       assert {:ok, %Account{} = account} = BankAccount.update_account(account, @update_attrs)
-      assert account.password_hash == "some updated password_hash"
+      assert account.balance == 950
     end
 
     test "update_account/2 with invalid data returns error changeset" do
@@ -123,6 +130,36 @@ defmodule HiringTestStone.BankAccountTest do
     test "change_account/1 returns a account changeset" do
       account = account_fixture()
       assert %Ecto.Changeset{} = BankAccount.change_account(account)
+    end
+
+    test "register_bank_account/1 with valid data creates an account and a user" do
+      attrs = %{
+        balance: 1_000,
+        password: "123456",
+        password_confirmation: "123456",
+        user: %{
+          name: "John Doe",
+          email: "johndoe@example.com"
+        }
+      }
+
+      assert {:ok, %Account{} = account} = BankAccount.register_bank_account(attrs)
+      assert account.user.id != nil
+      assert account.id != nil
+    end
+
+    test "register_bank_account/1 with invalid data returns error changeset" do
+      attrs = %{
+        balance: 1_000,
+        password: "123456",
+        password_confirmation: "123456",
+        user: %{
+          name: "John Doe"
+        }
+      }
+
+      assert {:error, %Ecto.Changeset{changes: %{user: %{errors: [email: _]}}}} =
+               BankAccount.register_bank_account(attrs)
     end
   end
 end

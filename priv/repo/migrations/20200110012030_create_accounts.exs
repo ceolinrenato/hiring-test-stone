@@ -3,6 +3,7 @@ defmodule HiringTestStone.Repo.Migrations.CreateAccounts do
 
   def change do
     execute("CREATE EXTENSION IF NOT EXISTS pgcrypto")
+
     create table(:accounts) do
       add :number, :uuid, default: fragment("gen_random_uuid()")
       add :password_hash, :string

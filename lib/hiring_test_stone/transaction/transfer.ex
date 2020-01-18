@@ -1,7 +1,10 @@
 defmodule HiringTestStone.Transaction.Transfer do
+  @moduledoc false
   alias HiringTestStone.BankAccount.Account
   use Ecto.Schema
   import Ecto.Changeset
+
+  @timestamps_opts [type: :utc_datetime]
 
   schema "transfers" do
     field :amount, :float
@@ -16,6 +19,7 @@ defmodule HiringTestStone.Transaction.Transfer do
     transfer
     |> cast(attrs, [:amount, :source_account_id, :destination_account_id])
     |> validate_required([:amount])
+    |> validate_number(:amount, greater_than: 0)
     |> foreign_key_constraint(:source_account_id)
     |> foreign_key_constraint(:destination_account_id)
   end

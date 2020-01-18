@@ -1,6 +1,11 @@
 defmodule HiringTestStone.Transaction.Withdraw do
+  @moduledoc false
   use Ecto.Schema
   import Ecto.Changeset
+
+  alias HiringTestStone.BankAccount.Account
+
+  @timestamps_opts [type: :utc_datetime]
 
   schema "withdraws" do
     field :amount, :float
@@ -14,6 +19,7 @@ defmodule HiringTestStone.Transaction.Withdraw do
     withdraw
     |> cast(attrs, [:amount, :source_account_id])
     |> validate_required([:amount])
+    |> validate_number(:amount, greater_than: 0)
     |> foreign_key_constraint(:source_account_id)
   end
 end

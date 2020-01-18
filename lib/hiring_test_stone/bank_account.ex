@@ -114,7 +114,9 @@ defmodule HiringTestStone.BankAccount do
 
   """
   def list_accounts do
-    Repo.all(Account)
+    Account
+    |> preload([:user])
+    |> Repo.all()
   end
 
   @doc """
@@ -131,7 +133,18 @@ defmodule HiringTestStone.BankAccount do
       ** (Ecto.NoResultsError)
 
   """
+
   def get_account!(id), do: Repo.get!(Account, id)
+
+  def get_account_by_number(<<_::288>> = account_number) do
+    Account
+    |> where([account], account.number == ^account_number)
+    |> preload(:user)
+    |> lock("FOR UPDATE")
+    |> Repo.one()
+  end
+
+  def get_account_by_number(_), do: {:error, :account_not_found}
 
   @doc """
   Creates a account.
@@ -148,6 +161,7 @@ defmodule HiringTestStone.BankAccount do
   def create_account(attrs \\ %{}) do
     %Account{}
     |> Account.changeset(attrs)
+    |> Ecto.Changeset.validate_required([:password_hash])
     |> Repo.insert()
   end
 
@@ -196,5 +210,31 @@ defmodule HiringTestStone.BankAccount do
   """
   def change_account(%Account{} = account) do
     Account.changeset(account, %{})
+  end
+
+  def register_bank_account(attrs \\ %{}) do
+    %Account{}
+    |> Account.changeset_with_user(attrs)
+    |> Repo.insert()
+  end
+
+  def find_account_by_number_and_password(
+        %Plug.Conn{} = conn,
+        <<_::288>> = account_number,
+        password
+      ) do
+    case(
+      Account
+      |> where([account], account.number == ^account_number)
+      |> Repo.one()
+      |> Bcrypt.check_pass(password)
+    ) do
+      {:ok, account} -> Plug.Conn.assign(conn, :authenticated_account, account)
+      {:error, _} -> Plug.Conn.halt(conn)
+    end
+  end
+
+  def find_account_by_number_and_password(%Plug.Conn{} = conn, _, _) do
+    Plug.Conn.halt(conn)
   end
 end

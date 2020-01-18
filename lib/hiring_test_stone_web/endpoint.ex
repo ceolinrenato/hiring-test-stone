@@ -1,9 +1,9 @@
 defmodule HiringTestStoneWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :hiring_test_stone
 
-  socket "/socket", HiringTestStoneWeb.UserSocket,
-    websocket: true,
-    longpoll: false
+  # socket "/socket", HiringTestStoneWeb.UserSocket,
+  #   websocket: true,
+  #   longpoll: false
 
   # Serve at "/" the static files from "priv/static" directory.
   #
