@@ -1,4 +1,8 @@
 defmodule HiringTestStone.EmailDispatcher do
+  @moduledoc """
+    Module to hold functionality to send emails to our clients in the future
+    Probaly will use Bamboo library
+  """
   require Logger
   alias HiringTestStone.BankAccount.Account
 
