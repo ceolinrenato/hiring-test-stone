@@ -1,4 +1,4 @@
-use Mix.Config
+import Config
 
 config :hiring_test_stone, HiringTestStoneWeb.Endpoint,
   server: true,
