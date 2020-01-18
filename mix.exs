@@ -20,7 +20,7 @@ defmodule HiringTestStone.MixProject do
   def application do
     [
       mod: {HiringTestStone.Application, []},
-      extra_applications: [:logger, :runtime_tools, :timex]
+      extra_applications: [:logger, :runtime_tools]
     ]
   end
 
