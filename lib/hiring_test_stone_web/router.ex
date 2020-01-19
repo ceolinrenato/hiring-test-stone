@@ -8,7 +8,7 @@ defmodule HiringTestStoneWeb.Router do
 
     plug BasicAuth,
       callback: &BankAccount.find_account_by_number_and_password/3,
-      realm: "Se fudeu"
+      realm: "User Protected Area"
   end
 
   pipeline :api do
