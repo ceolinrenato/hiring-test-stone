@@ -5,7 +5,7 @@ config :hiring_test_stone, HiringTestStone.Repo,
   username: "postgres",
   password: "postgres",
   database: "hiring_test_stone_dev",
-  hostname: "localhost",
+  hostname: "postgres",
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
 
