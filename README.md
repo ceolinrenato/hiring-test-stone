@@ -402,4 +402,4 @@ Note: In the time of writing this README.md file it was 01/20/2020, and no trans
 
 In the end I had some fun and became very proud of the final result of this implementation. It was my very first lines of code written using the Elixir language. It was a though process having to learn some language features and the philosophy of both the language and the Phoenix Framework.
 
-If I could came up with this solution only working on my spare hours and without having to sacrifice my social life during this 12 days, I wonder the possibilities of what I could achieve working full time with the Elixir language and in a company that keeps me interested and happy as working in challenging problems as I was during the time of this project development.
+If I could came up with this solution only working on my spare hours and without having to sacrifice my social life during this 12 days, I wonder the possibilities of what I could achieve working full time with the Elixir language and in a company that keeps me interested and happy while working in challenging problems as I was during the time of this project development.
