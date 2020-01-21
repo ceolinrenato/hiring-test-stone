@@ -1,8 +1,8 @@
 # Stone Backend Challenge
 
-Hi! I'm [Renato Ceolin](https://github.com/ceolinrenato) and this repository contains my implementation for the backend technical challenge proposed by Stone (a fintech company from Brazil). You can find the challenge instructions [here](https://gist.github.com/thuli/e021378b27ff471795e37ba5a5b73539).
+Hi! I'm [Renato Ceolin](https://github.com/ceolinrenato) and this repository contains my implementation for the backend technical challenge proposed by Stone (a fintech company from Brazil). You can find the challenge instructions [here](https://gist.github.com/thulio/e021378b27ff471795e37ba5a5b73539).
 
-**pt-BR**: Olá! Sou [Renato Ceolin](https://github.com/ceolinrenato) e nesse repositório você encontra a minha implementação do desáfio técnico para o cargo de Desenvolvedor Backend proposto pela Stone (uma fintech do Brasil). Você pode encontrar as instruções do desafio [aqui](https://gist.github.com/thuli/e021378b27ff471795e37ba5a5b73539).
+**pt-BR**: Olá! Sou [Renato Ceolin](https://github.com/ceolinrenato) e nesse repositório você encontra a minha implementação do desáfio técnico para o cargo de Desenvolvedor Backend proposto pela Stone (uma fintech do Brasil). Você pode encontrar as instruções do desafio [aqui](https://gist.github.com/thulio/e021378b27ff471795e37ba5a5b73539).
 
 ## Setup
 
